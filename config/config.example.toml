@@ -1,0 +1,43 @@
+# circRNA Pipeline Configuration Example
+# Copy this file to config.toml and modify paths
+
+[config]
+# === REQUIRED: Reference Files ===
+# Genome FASTA file (GRCh38 recommended)
+reference_fasta = "/data/references/GRCh38/GRCh38.primary_assembly.genome.fa"
+
+# Gene annotation GTF (GENCODE recommended)
+gene_annotation = "/data/references/GRCh38/gencode.v34.annotation.gtf"
+
+# === REQUIRED: Index Files ===
+# BWA index (for CIRIquant and CIRCexplorer2)
+# Generate with: bwa index -a bwtsw genome.fa
+bwa_index = "/data/references/GRCh38/GRCh38.primary_assembly.genome.fa"
+
+# HISAT2 index (for CIRIquant)
+# Generate with: hisat2-build genome.fa genome.fa
+hisat2_index = "/data/references/GRCh38/GRCh38.primary_assembly.genome.fa"
+
+# Bowtie2 index (for find_circ)
+# Generate with: bowtie2-build genome.fa genome.bt2
+bowtie2_index = "/data/references/GRCh38/GRCh38.primary_assembly.bt2"
+
+# STAR index (for circRNA_finder)
+# Generate with: STAR --runMode genomeGenerate --genomeDir star_index --genomeFastaFiles genome.fa
+star_index = "/data/references/GRCh38/STAR_index"
+
+# === METHOD-SPECIFIC CONFIGS ===
+# CIRIquant YAML config (see config/ciriquant_hg38.yml)
+ciriquant_config = "config/ciriquant_hg38.yml"
+
+# CIRCexplorer2 reference file
+# Generate with: fetch_ucsc.py hg38 > hg38_ref.txt
+circexplorer2_ref = "/data/references/GRCh38/hg38_ref.txt"
+
+# === SAMPLES ===
+# Path to samples CSV file (see samplesheet.example.csv)
+samples = "samples.csv"
+
+[defaults]
+threads = 8
+memory = "16G"
