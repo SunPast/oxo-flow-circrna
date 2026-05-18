@@ -20,7 +20,7 @@ threads = 2
 memory = "8G"
 description = "Aggregate circRNA calls from all methods"
 shell = """
-Rscript scripts/aggregate_beds.R results results {config.gene_annotation} scripts/common.py 2>&1 | tee results/{sample}_aggregate.log
+Rscript scripts/aggregate_beds.R results results {config.gene_annotation} scripts/common.py {sample} 2>&1 | tee results/{sample}_aggregate.log
 if [ ! -f {output[0]} ]; then
     echo "No circRNAs detected for {sample}" > {output[0]}
 fi

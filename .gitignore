@@ -4,6 +4,9 @@ trimmed/
 qc/
 aligned/
 
+# oxo-flow checkpoint
+.oxo-flow/
+
 # Temporary files
 *.log
 *.tmp
@@ -11,6 +14,10 @@ aligned/
 
 # Conda environments (user creates these)
 .envs/
+
+# User configuration (copy from config.example.toml)
+config.toml
+samples.csv
 
 # IDE
 .vscode/
