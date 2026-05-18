@@ -1,0 +1,53 @@
+# circRNA Detection Pipeline
+# Built on oxo-flow engine
+#
+# Detects circRNAs from paired-end RNA-seq using 4 methods:
+# - CIRIquant, CIRCexplorer2, find_circ, circRNA_finder
+# Results are aggregated for high-confidence circRNA calls.
+
+[workflow]
+name = "circrna"
+version = "1.0.0"
+description = "circRNA detection and analysis pipeline"
+author = "oxo-flow-circrna"
+format_version = "1.0"
+
+[config]
+# Reference genome and annotation
+reference_fasta = "/path/to/GRCh38.primary_assembly.genome.fa"
+gene_annotation = "/path/to/gencode.v34.annotation.gtf"
+
+# Index paths (must be pre-built)
+bwa_index = "/path/to/GRCh38.primary_assembly.genome.fa"
+hisat2_index = "/path/to/GRCh38.primary_assembly.genome.fa"
+bowtie2_index = "/path/to/GRCh38.primary_assembly.bt2"
+star_index = "/path/to/STAR_index"
+
+# CIRIquant configuration file
+ciriquant_config = "config/ciriquant_hg38.yml"
+
+# CIRCexplorer2 reference (from fetch_ucsc.py)
+circexplorer2_ref = "/path/to/hg38_ref.txt"
+
+# Sample configuration
+samples = "samples.csv"
+
+[defaults]
+threads = 8
+memory = "16G"
+
+# Include modular sub-workflows
+[[includes]]
+path = "rules/qc.oxoflow"
+
+[[includes]]
+path = "rules/callers.oxoflow"
+
+[[includes]]
+path = "rules/annotation.oxoflow"
+
+[[includes]]
+path = "rules/aggregation.oxoflow"
+
+[[includes]]
+path = "rules/report.oxoflow"
