@@ -1,0 +1,19 @@
+# Report Module - Generate HTML reports
+
+# === Generate HTML report ===
+[[rules]]
+name = "report"
+input = ["results/*.aggr.txt"]
+output = ["results/circrna_report.html"]
+depends_on = ["aggregate"]
+threads = 2
+memory = "4G"
+description = "Generate circRNA analysis HTML report"
+shell = """
+mkdir -p results
+Rscript scripts/generate_report.R results {output[0]} 2>&1 | tee results/report.log
+echo "Report generated: {output[0]}"
+"""
+
+[rules.environment]
+conda = "envs/report.yaml"
