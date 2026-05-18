@@ -1,0 +1,42 @@
+# Aggregation Module - Ensemble circRNA calls
+# Merges results from all four detection methods
+
+# === Aggregate circRNAs per sample ===
+[[rules]]
+name = "aggregate"
+input = [
+    "results/{sample}.CIRI.bed",
+    "results/{sample}.circexplorer2.bed",
+    "results/{sample}.find_circ.bed",
+    "results/{sample}.circRNA_finder.bed"
+]
+output = ["results/{sample}.aggr.txt"]
+depends_on = ["ciriquant", "circexplorer2", "find_circ", "circrna_finder"]
+threads = 2
+memory = "8G"
+description = "Aggregate circRNA calls from all methods"
+shell = """
+Rscript scripts/aggregate_beds.R results results {config.gene_annotation} scripts/common.py 2>&1 | tee results/{sample}_aggregate.log
+if [ ! -f {output[0]} ]; then
+    echo "No circRNAs detected for {sample}" > {output[0]}
+fi
+"""
+
+[rules.environment]
+conda = "envs/annotation.yaml"
+
+# === Aggregate across all samples ===
+[[rules]]
+name = "aggregate_dataset"
+input = ["results/*.aggr.txt"]
+output = ["results/all_circRNA.tsv.gz"]
+depends_on = ["aggregate"]
+threads = 2
+memory = "8G"
+description = "Aggregate circRNAs across all samples"
+shell = """
+Rscript scripts/aggregate_dataset.R results results {config.samples} 2>&1 | tee results/dataset_aggregate.log
+"""
+
+[rules.environment]
+conda = "envs/annotation.yaml"
