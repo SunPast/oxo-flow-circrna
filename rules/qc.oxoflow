@@ -1,0 +1,49 @@
+# QC Module - fastp and MultiQC
+# Performs quality control and adapter trimming on FASTQ files
+
+# === fastp: Adapter trimming and QC ===
+[[rules]]
+name = "fastp"
+input = ["raw/{sample}_1.fastq.gz", "raw/{sample}_2.fastq.gz"]
+output = [
+    "trimmed/{sample}_1.fastq.gz",
+    "trimmed/{sample}_2.fastq.gz",
+    "qc/{sample}_fastp.json",
+    "qc/{sample}_fastp.html"
+]
+threads = 8
+memory = "8G"
+description = "Adapter trimming and quality filtering with fastp"
+shell = """
+mkdir -p trimmed qc
+fastp -i {input[0]} -I {input[1]} \
+      -o {output[0]} -O {output[1]} \
+      --json {output[2]} \
+      --html {output[3]} \
+      --thread {threads} \
+      --qualified_quality_phred 20 \
+      --length_required 50 \
+      --detect_adapter_for_pe \
+      --cut_front \
+      --cut_tail \
+      --cut_window_size 4 \
+      --cut_mean_quality 20
+"""
+
+[rules.environment]
+conda = "envs/fastp.yaml"
+
+# === MultiQC: Aggregate QC reports ===
+[[rules]]
+name = "multiqc"
+input = ["qc/*.json"]
+output = ["results/multiqc_report.html"]
+depends_on = ["fastp"]
+description = "Aggregate QC metrics with MultiQC"
+shell = """
+mkdir -p results
+multiqc qc/ -o results/ --force
+"""
+
+[rules.environment]
+conda = "envs/multiqc.yaml"
