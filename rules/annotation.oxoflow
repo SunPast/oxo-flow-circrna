@@ -1,0 +1,5 @@
+# Annotation Module - Gene annotation for circRNAs
+# Currently annotation is integrated into aggregation step
+# This file is a placeholder for future standalone annotation
+
+# No additional rules needed - annotation is performed in aggregation
