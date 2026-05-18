@@ -1,98 +1,85 @@
 # oxo-flow-circrna
 
-A circRNA detection and analysis pipeline built on [oxo-flow](https://github.com/Traitome/oxo-flow).
+circRNA detection pipeline built on [oxo-flow](https://github.com/Traitome/oxo-flow).
 
-## Overview
+## Quick Start (3 steps)
 
-This pipeline detects circRNAs from paired-end RNA-seq FASTQ files using four complementary methods:
-- **CIRIquant** - Alignment-based detection using BWA and HISAT2
-- **CIRCexplorer2** - Junction-based detection using BWA
-- **find_circ** - Anchor-based detection using Bowtie2
-- **circRNA_finder** - Chimeric read detection using STAR
+```bash
+# 1. Setup
+./scripts/setup.sh
 
-Results from all methods are aggregated to produce reliable, high-confidence circRNA calls.
+# 2. Edit config.toml with your reference paths
+#    Just set reference_dir="/path/to/your/GRCh38" and you're done!
+
+# 3. Run
+oxo-flow run circrna.oxoflow -j 16
+```
 
 ## Features
 
-- **Multi-method ensemble**: Combines 4 complementary circRNA detection tools
-- **High-confidence calls**: Requires detection by >=2 methods with position tolerance
-- **Gene annotation**: Maps circRNAs to gene symbols using GTF annotation
-- **Comprehensive reports**: HTML reports with method comparison and statistics
-- **Reproducible**: Conda environment management for each tool
-- **Modular architecture**: Sub-workflow modules for easy customization
+- **4 detection methods**: CIRIquant, CIRCexplorer2, find_circ, circRNA_finder
+- **Ensemble aggregation**: High-confidence calls detected by ≥2 methods
+- **Single config file**: No need to edit multiple configuration files
+- **Auto environment setup**: One script creates all conda environments
+- **Comprehensive reports**: HTML reports with statistics and visualizations
 
-## Requirements
+## Reference Data Setup
 
-### Software
-- oxo-flow >= 0.5.0
-- Conda or Mamba (recommended)
+Create a directory with this structure:
 
-### Reference Files
-- Reference genome FASTA (e.g., GRCh38)
-- Gene annotation GTF (e.g., GENCODE v34)
-- Pre-built indices:
-  - BWA index
-  - Bowtie2 index
-  - STAR index
-  - HISAT2 index (for CIRIquant)
-
-## Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/YOUR_ORG/oxo-flow-circrna.git
-cd oxo-flow-circrna
-
-# Install oxo-flow (if not already installed)
-cargo install oxo-flow --git https://github.com/Traitome/oxo-flow
+```
+/data/references/GRCh38/
+├── genome.fa              # Reference FASTA
+├── genome.fa.fai          # FASTA index
+├── genes.gtf              # Gene annotation (GENCODE)
+├── hg38_ref.txt           # CIRCexplorer2 reference (run: fetch_ucsc.py hg38 > hg38_ref.txt)
+├── bwa/                   # BWA index
+│   └── genome.fa.bwt
+├── bowtie2/               # Bowtie2 index
+│   └── genome.fa.1.bt2
+├── star/                  # STAR index
+│   └── Genome
+└── hisat2/                # HISAT2 index (for CIRIquant)
+    └── genome.fa.ht2
 ```
 
-## Quick Start
+Set `reference_dir = "/data/references/GRCh38"` in `config.toml`.
+
+### Building Indices
 
 ```bash
-# 1. Configure the pipeline
-cp config/config.example.toml config.toml
-# Edit config.toml with your reference paths
+# Create index directories
+mkdir -p reference/{bwa,bowtie2,star,hisat2}
 
-# 2. Create samples.csv
-# Format: sample,r1_fastq,r2_fastq
+# BWA (for CIRIquant and CIRCexplorer2)
+bwa index -p reference/bwa/genome.fa reference/genome.fa
 
-# 3. Validate the workflow
-oxo-flow validate circrna.oxoflow
+# Bowtie2 (for find_circ)
+bowtie2-build reference/genome.fa reference/bowtie2/genome.fa
 
-# 4. Run the pipeline
-oxo-flow run circrna.oxoflow -j 16
+# STAR (for circRNA_finder)
+STAR --runMode genomeGenerate --genomeDir reference/star \
+     --genomeFastaFiles reference/genome.fa --runThreadN 8
+
+# HISAT2 (for CIRIquant)
+hisat2-build reference/genome.fa reference/hisat2/genome.fa
 ```
 
 ## Configuration
 
-### Main Configuration File
-
-Create `config.toml` from the example:
+### Minimal config.toml
 
 ```toml
 [config]
-# Reference genome and annotation
-reference_fasta = "/path/to/GRCh38.primary_assembly.genome.fa"
-gene_annotation = "/path/to/gencode.v34.annotation.gtf"
-
-# Index paths
-bwa_index = "/path/to/GRCh38.primary_assembly.genome.fa"
-bowtie2_index = "/path/to/GRCh38.primary_assembly.bt2"
-star_index = "/path/to/STAR_index"
-
-# Tool configurations
-ciriquant_config = "config/ciriquant_hg38.yml"
-circexplorer2_ref = "/path/to/hg38_ref.txt"
+reference_dir = "/data/references/GRCh38"
+samples = "samples.csv"
 
 [defaults]
 threads = 8
 memory = "16G"
 ```
 
-### Sample Sheet Format
-
-Create `samples.csv`:
+### samples.csv Format
 
 ```csv
 sample,r1_fastq,r2_fastq
@@ -100,107 +87,60 @@ SAMPLE_01,raw/SAMPLE_01_1.fastq.gz,raw/SAMPLE_01_2.fastq.gz
 SAMPLE_02,raw/SAMPLE_02_1.fastq.gz,raw/SAMPLE_02_2.fastq.gz
 ```
 
+## Output
+
+| File | Description |
+|------|-------------|
+| `results/{sample}.CIRI.bed` | CIRIquant calls |
+| `results/{sample}.circexplorer2.bed` | CIRCexplorer2 calls |
+| `results/{sample}.find_circ.bed` | find_circ calls |
+| `results/{sample}.circRNA_finder.bed` | circRNA_finder calls |
+| `results/{sample}.aggr.txt` | Aggregated calls per sample |
+| `results/all_circRNA.tsv.gz` | Combined circRNAs across all samples |
+| `results/circrna_report.html` | HTML report |
+| `results/multiqc_report.html` | QC summary |
+
 ## Pipeline Architecture
 
 ```
-FASTQ Input
-     |
-   fastp (QC + Trimming)
-     |
-  +--+--+--+--+
-  |  |  |  |  |
-  |  |  |  |  +-- circRNA_finder --> .circRNA_finder.bed
-  |  |  |  +----- find_circ -----------> .find_circ.bed
-  |  |  +-------- CIRCexplorer2 --------> .circexplorer2.bed
-  |  +----------- CIRIquant -------------> .CIRI.bed
-  |
-  +-- MultiQC --> multiqc_report.html
-
-All BED files --> Aggregate --> all_circRNA.tsv.gz
-                        |
-                     Annotate
-                        |
-                     Report --> circrna_report.html
+FASTQ → fastp → [4 callers in parallel] → aggregate → report
+              ↓
+           MultiQC
 ```
 
-### Modules
+## Requirements
 
-| Module | File | Description |
-|--------|------|-------------|
-| QC | `rules/qc.oxoflow` | fastp trimming + MultiQC |
-| Callers | `rules/callers.oxoflow` | All 4 circRNA detection tools |
-| Annotation | `rules/annotation.oxoflow` | Placeholder for future use |
-| Aggregation | `rules/aggregation.oxoflow` | Ensemble aggregation |
-| Report | `rules/report.oxoflow` | HTML report generation |
-
-## Output Files
-
-### Per-Sample Outputs
-- `{sample}.CIRI.bed` - CIRIquant circRNA calls (7 columns)
-- `{sample}.circexplorer2.bed` - CIRCexplorer2 calls (5 columns)
-- `{sample}.find_circ.bed` - find_circ calls (6 columns)
-- `{sample}.circRNA_finder.bed` - circRNA_finder calls (5 columns)
-- `{sample}.aggr.txt` - Aggregated circRNA calls for sample
-
-### Final Outputs
-- `all_circRNA.tsv.gz` - Combined circRNAs across all samples
-- `circrna_report.html` - Comprehensive HTML report
-- `multiqc_report.html` - QC metrics summary
-
-### Aggregated Output Format
-
-`all_circRNA.tsv.gz` columns:
-- `chr` - Chromosome
-- `start` - Start position (0-based)
-- `end` - End position
-- `strand` - Strand (+/-)
-- `gene` - Gene symbol
-- `tool` - Detecting tools (comma-separated)
-- `count` - Average junction read counts
-- `sample` - Sample identifier
-
-## Environment Files
-
-Each tool has its own conda environment:
-
-| Environment | File | Tools |
-|------------|------|-------|
-| fastp | `envs/fastp.yaml` | fastp |
-| multiqc | `envs/multiqc.yaml` | MultiQC |
-| ciriquant | `envs/ciriquant.yaml` | CIRIquant, BWA, HISAT2, StringTie |
-| circexplorer2 | `envs/circexplorer2.yaml` | CIRCexplorer2, BWA |
-| findcirc | `envs/findcirc.yaml` | find_circ, Bowtie2 |
-| circrna_finder | `envs/circrna_finder.yaml` | circRNA_finder, STAR |
-| annotation | `envs/annotation.yaml` | R, data.table |
-| report | `envs/report.yaml` | R, rmarkdown, ggplot2, plotly |
-
-## Testing
-
-```bash
-# Validate workflow structure
-oxo-flow validate circrna.oxoflow
-
-# Dry-run to preview execution
-oxo-flow dry-run circrna.oxoflow
-
-# View DAG
-oxo-flow graph circrna.oxoflow | dot -Tpng > dag.png
-```
-
-See `test_data/README.md` for information on obtaining test data.
+- **oxo-flow** >= 0.5.0
+- **Conda** or **Mamba**
+- **Memory**: 32GB recommended (CIRIquant and circRNA_finder need 32GB each)
+- **Disk**: 50GB+ for indices, varies for outputs
 
 ## Troubleshooting
 
-### Common Issues
+### Memory warnings
 
-1. **Memory warnings**: Reduce `memory` in config if OOM occurs
-2. **Missing indices**: Pre-build all required indices before running
-3. **Environment setup**: Ensure conda/mamba is properly configured
+If you see `may OOM` warnings, reduce the memory in config:
 
-### Logs
+```toml
+[defaults]
+memory = "24G"
+```
 
-- Check `.oxo-flow/` directory for execution logs
-- Each rule outputs to `results/{sample}.{tool}/` directories
+### Missing indices
+
+Run the index building commands above. All indices must exist before running the pipeline.
+
+### Conda environment errors
+
+Run `./scripts/setup.sh` again or manually create environments:
+
+```bash
+conda env create -f envs/ciriquant.yaml -n circrna_ciriquant
+```
+
+## License
+
+Apache 2.0
 
 ## References
 
@@ -208,12 +148,4 @@ See `test_data/README.md` for information on obtaining test data.
 - [CIRCexplorer2](https://circexplorer2.readthedocs.io/)
 - [find_circ](https://github.com/marvin-jens/find_circ)
 - [circRNA_finder](https://github.com/orzechoj/circRNA_finder)
-- [Original Pipeline](https://github.com/OncoHarmony-Network/circrna-pipeline)
-
-## License
-
-Apache 2.0 - See [LICENSE](LICENSE)
-
-## Acknowledgments
-
-This pipeline is based on the [circrna-pipeline](https://github.com/OncoHarmony-Network/circrna-pipeline) project and reimplemented using oxo-flow for improved reproducibility and performance.
+- [Original pipeline](https://github.com/OncoHarmony-Network/circrna-pipeline)

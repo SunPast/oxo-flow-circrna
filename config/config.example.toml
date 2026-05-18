@@ -1,41 +1,32 @@
-# circRNA Pipeline Configuration Example
-# Copy this file to config.toml and modify paths
+# circRNA Pipeline Configuration
+# Copy to config.toml and set your reference directory
 
 [config]
-# === REQUIRED: Reference Files ===
-# Genome FASTA file (GRCh38 recommended)
-reference_fasta = "/data/references/GRCh38/GRCh38.primary_assembly.genome.fa"
+# === CORE: Set this one path, others derive from it ===
+# All references are expected under this directory:
+#   {reference_dir}/genome.fa
+#   {reference_dir}/genome.fa.fai
+#   {reference_dir}/genes.gtf
+#   {reference_dir}/bwa/
+#   {reference_dir}/bowtie2/
+#   {reference_dir}/star/
+#   {reference_dir}/hisat2/
+#   {reference_dir}/hg38_ref.txt  (for CIRCexplorer2)
+reference_dir = "/data/references/GRCh38"
 
-# Gene annotation GTF (GENCODE recommended)
-gene_annotation = "/data/references/GRCh38/gencode.v34.annotation.gtf"
+# Override individual paths if needed (optional):
+# reference_fasta = "/custom/path/genome.fa"
+# gene_annotation = "/custom/path/genes.gtf"
+# bwa_index = "/custom/bwa_index"
+# bowtie2_index = "/custom/bowtie2_index"
+# star_index = "/custom/star_index"
+# hisat2_index = "/custom/hisat2_index"
+# circexplorer2_ref = "/custom/hg38_ref.txt"
 
-# === REQUIRED: Index Files ===
-# BWA index (for CIRIquant and CIRCexplorer2)
-# Generate with: bwa index -a bwtsw genome.fa
-bwa_index = "/data/references/GRCh38/GRCh38.primary_assembly.genome.fa"
-
-# HISAT2 index (for CIRIquant)
-# Generate with: hisat2-build genome.fa genome.fa
-hisat2_index = "/data/references/GRCh38/GRCh38.primary_assembly.genome.fa"
-
-# Bowtie2 index (for find_circ)
-# Generate with: bowtie2-build genome.fa genome.bt2
-bowtie2_index = "/data/references/GRCh38/GRCh38.primary_assembly.bt2"
-
-# STAR index (for circRNA_finder)
-# Generate with: STAR --runMode genomeGenerate --genomeDir star_index --genomeFastaFiles genome.fa
-star_index = "/data/references/GRCh38/STAR_index"
-
-# === METHOD-SPECIFIC CONFIGS ===
-# CIRIquant YAML config (see config/ciriquant_hg38.yml)
+# CIRIquant internal config (auto-generated from above paths)
 ciriquant_config = "config/ciriquant_hg38.yml"
 
-# CIRCexplorer2 reference file
-# Generate with: fetch_ucsc.py hg38 > hg38_ref.txt
-circexplorer2_ref = "/data/references/GRCh38/hg38_ref.txt"
-
-# === SAMPLES ===
-# Path to samples CSV file (see samplesheet.example.csv)
+# Sample sheet
 samples = "samples.csv"
 
 [defaults]
