@@ -1,6 +1,10 @@
 # Aggregation Module - Ensemble circRNA calls
 # Merges results from all four detection methods
 
+[workflow]
+name = "aggregation"
+version = "1.0.0"
+
 # === Aggregate circRNAs per sample ===
 [[rules]]
 name = "aggregate"

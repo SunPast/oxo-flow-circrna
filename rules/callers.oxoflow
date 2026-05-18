@@ -1,6 +1,10 @@
 # Callers Module - circRNA detection methods
 # Four complementary methods: CIRIquant, CIRCexplorer2, find_circ, circRNA_finder
 
+[workflow]
+name = "callers"
+version = "1.0.0"
+
 # === CIRIquant: Alignment-based circRNA detection ===
 [[rules]]
 name = "ciriquant"

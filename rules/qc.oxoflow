@@ -1,6 +1,10 @@
 # QC Module - fastp and MultiQC
 # Performs quality control and adapter trimming on FASTQ files
 
+[workflow]
+name = "qc"
+version = "1.0.0"
+
 # === fastp: Adapter trimming and QC ===
 [[rules]]
 name = "fastp"

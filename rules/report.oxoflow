@@ -1,5 +1,9 @@
 # Report Module - Generate HTML reports
 
+[workflow]
+name = "report"
+version = "1.0.0"
+
 # === Generate HTML report ===
 [[rules]]
 name = "report"

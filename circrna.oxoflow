@@ -37,17 +37,17 @@ threads = 8
 memory = "16G"
 
 # Include modular sub-workflows
-[[includes]]
+[[include]]
 path = "rules/qc.oxoflow"
 
-[[includes]]
+[[include]]
 path = "rules/callers.oxoflow"
 
-[[includes]]
+[[include]]
 path = "rules/annotation.oxoflow"
 
-[[includes]]
+[[include]]
 path = "rules/aggregation.oxoflow"
 
-[[includes]]
+[[include]]
 path = "rules/report.oxoflow"
