@@ -1,0 +1,8 @@
+name: circrna_finder
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - circrna_finder
+  - star
+  - samtools

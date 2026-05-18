@@ -1,0 +1,9 @@
+name: findcirc
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - find_circ=1.2
+  - bowtie2
+  - samtools
+  - python=2.7

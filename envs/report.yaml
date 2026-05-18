@@ -1,0 +1,12 @@
+name: report
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - r-base=4.2
+  - r-rmarkdown
+  - r-plotly
+  - r-ggplot2
+  - r-data.table
+  - r-dt
+  - r-knitr

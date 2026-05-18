@@ -1,0 +1,12 @@
+name: circexplorer2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.7
+  - bwa
+  - samtools
+  - pip
+  - pip:
+    - circexplorer2
