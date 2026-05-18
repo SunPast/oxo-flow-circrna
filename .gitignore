@@ -1,0 +1,25 @@
+# Output directories
+results/
+trimmed/
+qc/
+aligned/
+
+# Temporary files
+*.log
+*.tmp
+*.bak
+
+# Conda environments (user creates these)
+.envs/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large test data (if any)
+test_data/*.fastq.gz
+test_data/*.fq.gz
