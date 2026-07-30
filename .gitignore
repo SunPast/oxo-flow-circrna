@@ -8,6 +8,7 @@ aligned/
 .oxo-flow/
 
 # Temporary files
+raw/
 *.log
 *.tmp
 *.bak

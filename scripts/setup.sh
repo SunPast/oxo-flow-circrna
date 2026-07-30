@@ -29,12 +29,12 @@ check_tool() {
 
 MISSING=0
 check_tool oxo-flow || MISSING=1
-check_tool conda || check_tool mamba || MISSING=1
+check_tool conda || check_tool mamba || check_tool micromamba MISSING=1
 
 if [ $MISSING -eq 1 ]; then
     echo -e "\n${RED}Missing required tools. Please install:${NC}"
     echo "  - oxo-flow: cargo install oxo-flow --git https://github.com/Traitome/oxo-flow"
-    echo "  - conda/mamba: https://docs.conda.io/en/latest/miniconda.html"
+    echo "  - conda/mamba/micromamba: https://docs.conda.io/en/latest/miniconda.html"
     exit 1
 fi
 
@@ -62,6 +62,10 @@ echo "  This may take 10-20 minutes on first run"
 ENV_MANAGER="conda"
 if command -v mamba &> /dev/null; then
     ENV_MANAGER="mamba"
+fi
+
+if command -v micromamba &> /dev/null; then
+    ENV_MANAGER="micromamba"
 fi
 
 ENV_DIRS=("envs" ".envs")

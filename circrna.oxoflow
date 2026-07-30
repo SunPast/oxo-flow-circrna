@@ -12,6 +12,7 @@ version = "1.0.0"
 description = "circRNA detection and analysis pipeline"
 author = "oxo-flow-circrna"
 format_version = "1.0"
+sample_pattern = "raw/{sample}_1.fastq.gz"
 
 [config]
 # === Set these paths to your reference files ===

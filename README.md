@@ -79,12 +79,30 @@ threads = 8
 memory = "16G"
 ```
 
+### Input Data
+
+Place your paired-end FASTQ files in the `raw/` directory before running the pipeline:
+
+```
+raw/
+├── SAMPLE_01_1.fastq.gz
+├── SAMPLE_01_2.fastq.gz
+├── SAMPLE_02_1.fastq.gz
+└── SAMPLE_02_2.fastq.gz
+```
+
 ### samples.csv Format
 
 ```csv
 sample,r1_fastq,r2_fastq
 SAMPLE_01,raw/SAMPLE_01_1.fastq.gz,raw/SAMPLE_01_2.fastq.gz
 SAMPLE_02,raw/SAMPLE_02_1.fastq.gz,raw/SAMPLE_02_2.fastq.gz
+```
+
+You can auto-generate `samples.csv` from files in `raw/`:
+
+```bash
+bash generate_sample_list.sh
 ```
 
 ## Output

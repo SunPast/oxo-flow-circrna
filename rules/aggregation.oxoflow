@@ -33,7 +33,7 @@ conda = "envs/annotation.yaml"
 [[rules]]
 name = "aggregate_dataset"
 input = ["results/*.aggr.txt"]
-output = ["results/all_circRNA.tsv.gz"]
+output = ["results/results_circRNA.tsv.gz"]
 depends_on = ["aggregate"]
 threads = 2
 memory = "8G"

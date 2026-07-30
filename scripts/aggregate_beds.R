@@ -68,7 +68,7 @@ aggr_circRNA_beds <- function(sample, methods) {
     message("  Processing ", sample, "...")
     cmd <- paste("cat", paste(bed_files[!nonexists], collapse = " "),
                  "|", commonPy, "-t 2 -d 0", ">", file.path(OutDir, paste0(sample, ".common.txt")))
-    system(cmd, ignore.stdout = TRUE, ignore.stderr = TRUE)
+    system(cmd)
 
     common_file <- file.path(OutDir, paste0(sample, ".common.txt"))
     if (!file.exists(common_file) || file.info(common_file)$size == 0) {
