@@ -1,8 +1,16 @@
 # circRNA Pipeline Configuration
 # Copy to config.toml and update paths
+#
+# Option A (recommended): Set reference_dir — standard paths are auto-derived:
+#   [config]
+#   reference_dir = "/data/references/GRCh38"
+#   samples = "samples.csv"
+#
+# Option B: Override individual paths below if your layout differs:
 
 [config]
 # === Reference Files ===
+# reference_dir = "/data/references/GRCh38"  # Uncomment to auto-derive paths below
 reference_fasta = "/data/references/GRCh38/genome.fa"
 gene_annotation = "/data/references/GRCh38/genes.gtf"
 

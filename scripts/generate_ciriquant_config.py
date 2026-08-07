@@ -22,8 +22,12 @@ def generate_ciriquant_config(config_path="config.toml", output_path="config/cir
         print(f"Error: {config_path} not found")
         sys.exit(1)
 
-    with open(config_path, "rb") as f:
-        config = tomli.load(f)
+    try:
+        with open(config_path, "rb") as f:
+            config = tomli.load(f)
+    except Exception as e:
+        print(f"Error: failed to parse {config_path}: {e}", file=sys.stderr)
+        sys.exit(1)
 
     cfg = config.get("config", {})
 

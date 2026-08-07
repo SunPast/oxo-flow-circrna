@@ -31,3 +31,4 @@ Thumbs.db
 # Large test data (if any)
 test_data/*.fastq.gz
 test_data/*.fq.gz
+config/ciriquant_hg38.yml

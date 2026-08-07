@@ -66,8 +66,9 @@ aggr_circRNA_beds <- function(sample, methods) {
     }
 
     message("  Processing ", sample, "...")
-    cmd <- paste("cat", paste(bed_files[!nonexists], collapse = " "),
-                 "|", commonPy, "-t 2 -d 0", ">", file.path(OutDir, paste0(sample, ".common.txt")))
+    cmd <- paste("cat", paste(shQuote(bed_files[!nonexists]), collapse = " "),
+                 "|", shQuote(commonPy), "-t 2 -d 0", ">",
+                 shQuote(file.path(OutDir, paste0(sample, ".common.txt"))))
     system(cmd)
 
     common_file <- file.path(OutDir, paste0(sample, ".common.txt"))

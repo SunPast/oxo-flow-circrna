@@ -29,7 +29,7 @@ check_tool() {
 
 MISSING=0
 check_tool oxo-flow || MISSING=1
-check_tool conda || check_tool mamba || check_tool micromamba MISSING=1
+check_tool conda || check_tool mamba || check_tool micromamba || MISSING=1
 
 if [ $MISSING -eq 1 ]; then
     echo -e "\n${RED}Missing required tools. Please install:${NC}"
@@ -88,9 +88,11 @@ done
 echo -e "\n${YELLOW}[4/4] Generating CIRIquant config...${NC}"
 
 if command -v python3 &> /dev/null; then
-    python3 scripts/generate_ciriquant_config.py 2>/dev/null || {
-        echo -e "  ${YELLOW}⚠${NC} Could not auto-generate. Edit config/ciriquant_hg38.yml manually"
-    }
+    if python3 scripts/generate_ciriquant_config.py; then
+        echo -e "  ${GREEN}✓${NC} CIRIquant config generated"
+    else
+        echo -e "  ${YELLOW}⚠${NC} Could not auto-generate (see errors above). Edit config/ciriquant_hg38.yml manually"
+    fi
 else
     echo -e "  ${YELLOW}⚠${NC} Python3 not found. Edit config/ciriquant_hg38.yml manually"
 fi
