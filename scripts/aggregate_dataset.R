@@ -24,9 +24,16 @@ if (length(fileList) == 0) stop("No aggregation files found")
 sample_ids <- gsub("\\.aggr\\.txt$", "", basename(fileList))
 message("Samples: ", length(sample_ids))
 
-if (!is.null(AllSampleList) && file.exists(AllSampleList)) {
-    all_df <- fread(AllSampleList, header = FALSE, sep = "\t")
-    diff_samples <- setdiff(all_df[[1]], sample_ids)
+if (!is.null(AllSampleList) && nchar(AllSampleList) > 0) {
+    # Accept comma-separated list or CSV file path
+    if (grepl(",", AllSampleList)) {
+        all_samples <- strsplit(AllSampleList, ",")[[1]]
+    } else if (file.exists(AllSampleList)) {
+        all_samples <- fread(AllSampleList, header = FALSE, sep = "\t")[[1]]
+    } else {
+        all_samples <- AllSampleList
+    }
+    diff_samples <- setdiff(all_samples, sample_ids)
     if (length(diff_samples) > 0) message("Missing samples: ", paste(diff_samples, collapse = ", "))
 }
 

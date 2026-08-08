@@ -29,8 +29,8 @@ reference_dir = "/data/references/GRCh38"
 # gene_annotation = "/data/references/GRCh38/genes.gtf"
 # circexplorer2_ref = "/data/references/GRCh38/hg38_ref.txt"
 
-# Sample sheet (auto-generated: bash generate_sample_list.sh)
-samples = "samples.csv"
+# Sample discovery: auto-detected from raw/ via sample_pattern above.
+# Sample list available as {config.samples_list} in shell commands.
 
 [defaults]
 threads = 8

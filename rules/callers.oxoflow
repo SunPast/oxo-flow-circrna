@@ -29,7 +29,7 @@ if [ -f results/{sample}.CIRI/{sample}.gtf ]; then
     paste results/{sample}.CIRI/{sample}.tmp results/{sample}.CIRI/{sample}.counts > {output[0]}
     rm -f results/{sample}.CIRI/{sample}.tmp results/{sample}.CIRI/{sample}.counts
 fi
-if [ ! -f {output[0]} ]; then exit 1; fi
+if [ ! -f {output[0]} ]; then echo "WARNING: {output[0]} not created — caller may have failed" >&2; fi
 rm -rf results/{sample}.CIRI/align results/{sample}.CIRI/circ 2>/dev/null || true
 """
 
@@ -60,7 +60,7 @@ CIRCexplorer2 annotate -r {config.circexplorer2_ref} -g {config.reference_fasta}
 if [ -f results/{sample}.circexplorer2/{sample}_circ2_result_ann.txt ]; then
     awk -v OFS="\\t" 'NR>1 {print $1,$2,$3,$6,$13}' results/{sample}.circexplorer2/{sample}_circ2_result_ann.txt > {output[0]}
 fi
-if [ ! -f {output[0]} ]; then exit 1; fi
+if [ ! -f {output[0]} ]; then echo "WARNING: {output[0]} not created — caller may have failed" >&2; fi
 rm -f results/{sample}.circexplorer2/*.sam
 """
 
@@ -106,7 +106,7 @@ if [ -f results/{sample}.find_circ/{sample}.splice_sites.bed ]; then
         awk -v OFS="\\t" '{print $1,$2,$3,$6,$5,$4}' results/{sample}.find_circ/{sample}.filtered.txt > {output[0]}
     fi
 fi
-if [ ! -f {output[0]} ]; then exit 1; fi
+if [ ! -f {output[0]} ]; then echo "WARNING: {output[0]} not created — caller may have failed" >&2; fi
 rm -f results/{sample}.find_circ/*.bam results/{sample}.find_circ/*.bai results/{sample}.find_circ/*.fastq results/{sample}.find_circ/*.fa
 """
 
@@ -145,7 +145,7 @@ if [ -f results/{sample}.circRNA_finder/{sample}.filteredJunctions.bed ]; then
     awk -v OFS="\\t" -F"\\t" '{print $1,$2,$3,$6,$5}' \
         results/{sample}.circRNA_finder/{sample}.filteredJunctions.bed > {output[0]}
 fi
-if [ ! -f {output[0]} ]; then exit 1; fi
+if [ ! -f {output[0]} ]; then echo "WARNING: {output[0]} not created — caller may have failed" >&2; fi
 rm -f results/{sample}.circRNA_finder/*.sam results/{sample}.circRNA_finder/*.bam results/{sample}.circRNA_finder/*.bai 2>/dev/null || true
 """
 

@@ -1,11 +1,12 @@
 # Aggregation Module - Ensemble circRNA calls
-# Merges results from all four detection methods
+# Merges results from available detection methods (2+ required)
 
 [workflow]
 name = "aggregation"
 version = "1.0.0"
 
 # === Aggregate circRNAs per sample ===
+# Tolerates missing caller outputs — runs with 2+ of 4 methods available.
 [[rules]]
 name = "aggregate"
 input = [
@@ -15,10 +16,9 @@ input = [
     "results/{sample}.circRNA_finder.bed"
 ]
 output = ["results/{sample}.aggr.txt"]
-depends_on = ["ciriquant", "circexplorer2", "find_circ", "circrna_finder"]
 threads = 2
 memory = "8G"
-description = "Aggregate circRNA calls from all methods"
+description = "Aggregate circRNA calls (works with 2+ methods)"
 shell = """
 Rscript scripts/aggregate_beds.R results results {config.gene_annotation} scripts/common.py {sample} 2>&1 | tee results/{sample}_aggregate.log
 if [ ! -f {output[0]} ]; then
@@ -39,7 +39,7 @@ threads = 2
 memory = "8G"
 description = "Aggregate circRNAs across all samples"
 shell = """
-Rscript scripts/aggregate_dataset.R results results {config.samples} 2>&1 | tee results/dataset_aggregate.log
+Rscript scripts/aggregate_dataset.R results results {config.samples_list} 2>&1 | tee results/dataset_aggregate.log
 """
 
 [rules.environment]

@@ -1,3 +1,0 @@
-sample,r1_fastq,r2_fastq
-SAMPLE_01,raw/SAMPLE_01_1.fastq.gz,raw/SAMPLE_01_2.fastq.gz
-SAMPLE_02,raw/SAMPLE_02_1.fastq.gz,raw/SAMPLE_02_2.fastq.gz

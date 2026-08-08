@@ -80,8 +80,12 @@ done
 for env_file in "$ENV_DIR"/*.yaml; do
     env_name=$(basename "$env_file" .yaml)
     echo -n "  Creating $env_name... "
-    $ENV_MANAGER env create -f "$env_file" --name "circrna_$env_name" -y 2>/dev/null || true
-    echo -e "${GREEN}✓${NC}"
+    if $ENV_MANAGER env create -f "$env_file" --name "circrna_$env_name" -y 2>/dev/null; then
+        echo -e "${GREEN}✓${NC}"
+    else
+        echo -e "${RED}✗${NC} (failed)"
+        FAILED=1
+    fi
 done
 
 # Generate CIRIquant config

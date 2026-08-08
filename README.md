@@ -91,19 +91,20 @@ raw/
 └── SAMPLE_02_2.fastq.gz
 ```
 
-### samples.csv Format
+### Sample Discovery
 
-```csv
-sample,r1_fastq,r2_fastq
-SAMPLE_01,raw/SAMPLE_01_1.fastq.gz,raw/SAMPLE_01_2.fastq.gz
-SAMPLE_02,raw/SAMPLE_02_1.fastq.gz,raw/SAMPLE_02_2.fastq.gz
+Samples are auto-discovered from `raw/` using `sample_pattern` in `circrna.oxoflow`.
+No CSV file needed — just place FASTQ files in `raw/`:
+
+```
+raw/
+├── SAMPLE_01_1.fastq.gz
+├── SAMPLE_01_2.fastq.gz
+├── SAMPLE_02_1.fastq.gz
+└── SAMPLE_02_2.fastq.gz
 ```
 
-You can auto-generate `samples.csv` from files in `raw/`:
-
-```bash
-bash generate_sample_list.sh
-```
+The sample list is available as `{config.samples_list}` in shell commands.
 
 ## Output
 
