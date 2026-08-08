@@ -36,40 +36,10 @@ samples = "samples.csv"
 threads = 8
 memory = "16G"
 
-# === Auto-built references ===
-# oxo-flow builds these automatically on first run. No manual steps needed.
-
-[[references]]
-name = "bwa_index"
-source = "{config.reference_fasta}"
-output = "{config.reference_dir}/bwa/genome.fa"
-build = "mkdir -p {config.reference_dir}/bwa && bwa index -p {output} {source}"
-threads = 8
-description = "BWA index for CIRIquant and CIRCexplorer2"
-
-[[references]]
-name = "bowtie2_index"
-source = "{config.reference_fasta}"
-output = "{config.reference_dir}/bowtie2/genome.fa"
-build = "mkdir -p {config.reference_dir}/bowtie2 && bowtie2-build {source} {output}"
-threads = 8
-description = "Bowtie2 index for find_circ"
-
-[[references]]
-name = "star_index"
-source = "{config.reference_fasta}"
-output = "{config.reference_dir}/star"
-build = "mkdir -p {output} && STAR --runMode genomeGenerate --genomeDir {output} --genomeFastaFiles {source} --sjdbGTFfile {config.gene_annotation} --runThreadN 16"
-memory = "64G"
-description = "STAR index for circRNA_finder (large: ~30 GB, ~2-6 hours)"
-
-[[references]]
-name = "hisat2_index"
-source = "{config.reference_fasta}"
-output = "{config.reference_dir}/hisat2/genome.fa"
-build = "mkdir -p {config.reference_dir}/hisat2 && hisat2-build {source} {output}"
-threads = 8
-description = "HISAT2 index for CIRIquant"
+# === Indexes ===
+# Auto-built on first run from reference_dir. No manual steps needed.
+# To customize or add indexes, declare [[references]] blocks explicitly.
+# See: https://traitome.github.io/oxo-flow/reference/workflow-format/#references
 
 # === Sub-workflows ===
 [[include]]
