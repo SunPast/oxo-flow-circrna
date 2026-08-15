@@ -2,6 +2,9 @@
 
 circRNA detection pipeline built on [oxo-flow](https://github.com/Traitome/oxo-flow).
 
+> ☆ Community · ✦ Original — part of the
+> [oxo-flow-community catalog](https://oxo-flow-community.github.io/).
+
 ## Quick Start (3 steps)
 
 ```bash
@@ -16,6 +19,44 @@ oxo-flow run circrna.oxoflow -j 16
 ```
 
 **That's it.** No manual index building. No CSV files. No setup script required.
+
+## Installation
+
+### 1. Install oxo-flow
+
+Requires **oxo-flow ≥ 0.11.0**. Release binary (recommended):
+
+```bash
+curl -fL -o oxo-flow.tar.gz \
+  https://github.com/Traitome/oxo-flow/releases/download/v0.11.0/oxo-flow-v0.11.0-x86_64-unknown-linux-gnu.tar.gz
+tar xzf oxo-flow.tar.gz
+sudo mv oxo-flow /usr/local/bin/
+```
+
+Alternative: `conda install -c bioconda oxo-flow-cli` (may lag behind releases).
+
+### 2. Get this workflow
+
+```bash
+git clone https://github.com/WangLabCSU/oxo-flow-circrna.git
+cd oxo-flow-circrna
+```
+
+### 3. Requirements
+
+- **Reference data** (`reference_dir`): `genome.fa`, `genes.gtf`, `hg38_ref.txt`
+  (CIRCexplorer2), `CIRIquant.yml` — see [Reference Data](#reference-data).
+- **Reads**: paired FASTQ per sample in `raw/` (`<sample>_1.fastq.gz` /
+  `<sample>_2.fastq.gz`); samples are auto-discovered.
+- **Compute**: 8 threads / 32 GB per rule at most.
+- **Tools**: conda environments in `envs/` (pinned) — conda or mamba builds
+  them automatically on first run; no manual tool installation.
+
+## Test
+
+```bash
+bash test/run.sh   # validate + lint + dry-run on synthetic fixtures, exits 0
+```
 
 ## Features
 
@@ -35,6 +76,7 @@ Place your reference files in a directory with this structure:
 /data/references/GRCh38/
 ├── genome.fa              # Reference FASTA (required)
 ├── genes.gtf              # Gene annotation (GENCODE, required)
+├── CIRIquant.yml          # CIRIquant config (required for the CIRIquant caller)
 └── hg38_ref.txt           # CIRCexplorer2 reference (optional: fetch_ucsc.py hg38 > hg38_ref.txt)
 ```
 

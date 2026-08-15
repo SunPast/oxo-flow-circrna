@@ -24,13 +24,15 @@ sample_pattern = "raw/{sample}_1.fastq.gz"
 #   {reference_dir}/genes.gtf
 reference_dir = "/data/references/GRCh38"
 
-# === Optional overrides (uncomment if your layout differs) ===
-# reference_fasta = "/data/references/GRCh38/genome.fa"
-# gene_annotation = "/data/references/GRCh38/genes.gtf"
-# circexplorer2_ref = "/data/references/GRCh38/hg38_ref.txt"
+# === Auto-derived from reference_dir — override any of these if your layout differs ===
+reference_fasta = "{config.reference_dir}/genome.fa"
+gene_annotation = "{config.reference_dir}/genes.gtf"
+circexplorer2_ref = "{config.reference_dir}/hg38_ref.txt"
+ciriquant_config = "{config.reference_dir}/CIRIquant.yml"
 
-# Sample discovery: auto-detected from raw/ via sample_pattern above.
-# Sample list available as {config.samples_list} in shell commands.
+# Engine-injected at runtime: merged, sorted sample list from raw/ discovery.
+# The empty string is a validate-time placeholder — discovered samples are appended.
+samples_list = ""
 
 [defaults]
 threads = 8
